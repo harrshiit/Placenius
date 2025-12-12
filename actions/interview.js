@@ -4,8 +4,13 @@ import { db } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
+// -------------------------------
+//  FIXED MODEL NAME (VERY IMPORTANT)
+// -------------------------------
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+const model = genAI.getGenerativeModel({
+  model: "gemini-3-pro-preview",
+});
 
 export async function generateQuiz() {
   const { userId } = await auth();
@@ -13,50 +18,49 @@ export async function generateQuiz() {
 
   const user = await db.user.findUnique({
     where: { clerkUserId: userId },
-    select: {
-      industry: true,
-      skills: true,
-    },
+    select: { industry: true, skills: true },
   });
 
   if (!user) throw new Error("User not found");
 
   const prompt = `
-    Generate 10 technical interview questions for a ${
-      user.industry
-    } professional${
-    user.skills?.length ? ` with expertise in ${user.skills.join(", ")}` : ""
-  }.
-    
-    Each question should be multiple choice with 4 options.
-    
-    Return the response in this JSON format only, no additional text:
-    {
-      "questions": [
-        {
-          "question": "string",
-          "options": ["string", "string", "string", "string"],
-          "correctAnswer": "string",
-          "explanation": "string"
-        }
-      ]
-    }
+  Generate 10 technical interview questions for a ${user.industry} professional
+  ${user.skills?.length ? `with expertise in ${user.skills.join(", ")}` : ""}.
+
+  Each question should be multiple choice with 4 options.
+
+  RETURN STRICT JSON ONLY (no backticks, no markdown):
+  {
+    "questions": [
+      {
+        "question": "string",
+        "options": ["A", "B", "C", "D"],
+        "correctAnswer": "string",
+        "explanation": "string"
+      }
+    ]
+  }
   `;
 
   try {
     const result = await model.generateContent(prompt);
-    const response = result.response;
-    const text = response.text();
-    const cleanedText = text.replace(/```(?:json)?\n?/g, "").trim();
-    const quiz = JSON.parse(cleanedText);
+    let text = result.response.text();
 
-    return quiz.questions;
+    // Remove accidental code fencing
+    text = text.replace(/```json|```/g, "").trim();
+
+    const data = JSON.parse(text);
+
+    return data.questions;
   } catch (error) {
-    console.error("Error generating quiz:", error);
+    console.error("❌ Error generating quiz:", error);
     throw new Error("Failed to generate quiz questions");
   }
 }
 
+// -------------------------------------------------
+// SAVE QUIZ RESULT
+// -------------------------------------------------
 export async function saveQuizResult(questions, answers, score) {
   const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");
@@ -67,6 +71,7 @@ export async function saveQuizResult(questions, answers, score) {
 
   if (!user) throw new Error("User not found");
 
+  // Prepare question result objects
   const questionResults = questions.map((q, index) => ({
     question: q.question,
     answer: q.correctAnswer,
@@ -75,38 +80,32 @@ export async function saveQuizResult(questions, answers, score) {
     explanation: q.explanation,
   }));
 
-  // Get wrong answers
-  const wrongAnswers = questionResults.filter((q) => !q.isCorrect);
+  const wrongAnswers = questionResults.filter(q => !q.isCorrect);
 
-  // Only generate improvement tips if there are wrong answers
   let improvementTip = null;
+
   if (wrongAnswers.length > 0) {
-    const wrongQuestionsText = wrongAnswers
+    const wrongText = wrongAnswers
       .map(
-        (q) =>
-          `Question: "${q.question}"\nCorrect Answer: "${q.answer}"\nUser Answer: "${q.userAnswer}"`
+        q =>
+          `Q: ${q.question}\nCorrect: ${q.answer}\nUser: ${q.userAnswer}`
       )
       .join("\n\n");
 
-    const improvementPrompt = `
-      The user got the following ${user.industry} technical interview questions wrong:
+    const tipPrompt = `
+      The user got these ${user.industry} questions incorrect:
 
-      ${wrongQuestionsText}
+      ${wrongText}
 
-      Based on these mistakes, provide a concise, specific improvement tip.
-      Focus on the knowledge gaps revealed by these wrong answers.
-      Keep the response under 2 sentences and make it encouraging.
-      Don't explicitly mention the mistakes, instead focus on what to learn/practice.
+      Give ONE SHORT improvement tip (max 2 sentences).
+      Do NOT mention mistakes directly.
     `;
 
     try {
-      const tipResult = await model.generateContent(improvementPrompt);
-
+      const tipResult = await model.generateContent(tipPrompt);
       improvementTip = tipResult.response.text().trim();
-      console.log(improvementTip);
     } catch (error) {
-      console.error("Error generating improvement tip:", error);
-      // Continue without improvement tip if generation fails
+      console.error("Error generating tip:", error);
     }
   }
 
@@ -123,11 +122,14 @@ export async function saveQuizResult(questions, answers, score) {
 
     return assessment;
   } catch (error) {
-    console.error("Error saving quiz result:", error);
+    console.error("❌ Error saving quiz result:", error);
     throw new Error("Failed to save quiz result");
   }
 }
 
+// -------------------------------------------------
+// GET ASSESSMENTS
+// -------------------------------------------------
 export async function getAssessments() {
   const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");
@@ -139,18 +141,12 @@ export async function getAssessments() {
   if (!user) throw new Error("User not found");
 
   try {
-    const assessments = await db.assessment.findMany({
-      where: {
-        userId: user.id,
-      },
-      orderBy: {
-        createdAt: "asc",
-      },
+    return await db.assessment.findMany({
+      where: { userId: user.id },
+      orderBy: { createdAt: "asc" },
     });
-
-    return assessments;
   } catch (error) {
-    console.error("Error fetching assessments:", error);
+    console.error("❌ Error fetching assessments:", error);
     throw new Error("Failed to fetch assessments");
   }
 }

@@ -34,7 +34,7 @@ export default function LandingPage() {
       <section className="w-full py-12 md:py-24 lg:py-32 bg-background">
         <div className="container mx-auto px-4 md:px-6">
           <h2 className="text-3xl font-bold tracking-tighter text-center mb-12">
-            Powerful Features for Your Career Growth
+            Why choose placenius ?
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
             {features.map((feature, index) => (
@@ -189,10 +189,10 @@ export default function LandingPage() {
         <div className="mx-auto py-24 gradient rounded-lg">
           <div className="flex flex-col items-center justify-center space-y-4 text-center max-w-3xl mx-auto">
             <h2 className="text-3xl font-bold tracking-tighter text-primary-foreground sm:text-4xl md:text-5xl">
-              Ready to Accelerate Your Career?
+              Accelerate Your Career with  Placenius
             </h2>
             <p className="mx-auto max-w-[600px] text-primary-foreground/80 md:text-xl">
-              Join thousands of professionals who are advancing their careers
+              Joined thousands of Students who are advancing their careers
               with AI-powered guidance.
             </p>
             <Link href="/dashboard" passHref>
