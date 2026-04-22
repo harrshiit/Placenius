@@ -2,14 +2,11 @@
 
 import { db } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenAI } from "@google/genai";
 
-// Initialize Gemini with your API key
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-
-// Use the NEW correct model name
-const model = genAI.getGenerativeModel({
-  model: "gemini-3-pro-preview",
+// Initialize Gemini AI (CORRECT SDK)
+const ai = new GoogleGenAI({
+  apiKey: process.env.GEMINI_API_KEY,
 });
 
 export async function generateCoverLetter(data) {
@@ -35,21 +32,24 @@ Write a professional cover letter for the role of **${data.jobTitle}** at **${da
 ${data.jobDescription}
 
 ### Requirements:
-1. Use a confident and enthusiastic tone  
-2. Highlight relevant skills and achievements  
-3. Explain how the candidate will add value  
-4. Max 400 words  
-5. Use markdown formatting  
-6. Include actionable examples of achievements  
+1. Use a confident and enthusiastic tone
+2. Highlight relevant skills and achievements
+3. Explain how the candidate will add value
+4. Max 400 words
+5. Use markdown formatting
+6. Include actionable examples of achievements
 7. Match the job requirements with candidate strengths
 `;
 
   try {
-    // New API method
-    const result = await model.generateContent(prompt);
+    // ✅ CORRECT Gemini call
+    const response = await ai.models.generateContent({
+      model: "models/gemini-flash-latest",
+      contents: prompt,
+    });
 
-    // Extract the text safely
-    const content = result.response.text().trim();
+    const content = response.text?.trim();
+    if (!content) throw new Error("Empty AI response");
 
     const coverLetter = await db.coverLetter.create({
       data: {

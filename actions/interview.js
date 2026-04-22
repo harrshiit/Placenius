@@ -2,16 +2,16 @@
 
 import { db } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenAI } from "@google/genai";
 
-// -------------------------------
-//  FIXED MODEL NAME (VERY IMPORTANT)
-// -------------------------------
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const model = genAI.getGenerativeModel({
-  model: "gemini-3-pro-preview",
+// ✅ Correct Gemini initialization
+const ai = new GoogleGenAI({
+  apiKey: process.env.GEMINI_API_KEY,
 });
 
+// -------------------------------------------------
+// GENERATE QUIZ
+// -------------------------------------------------
 export async function generateQuiz() {
   const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");
@@ -24,33 +24,34 @@ export async function generateQuiz() {
   if (!user) throw new Error("User not found");
 
   const prompt = `
-  Generate 10 technical interview questions for a ${user.industry} professional
-  ${user.skills?.length ? `with expertise in ${user.skills.join(", ")}` : ""}.
+Generate 10 technical interview questions for a ${user.industry} professional
+${user.skills?.length ? `with expertise in ${user.skills.join(", ")}` : ""}.
 
-  Each question should be multiple choice with 4 options.
+Each question must be multiple choice with 4 options.
 
-  RETURN STRICT JSON ONLY (no backticks, no markdown):
-  {
-    "questions": [
-      {
-        "question": "string",
-        "options": ["A", "B", "C", "D"],
-        "correctAnswer": "string",
-        "explanation": "string"
-      }
-    ]
-  }
-  `;
+RETURN STRICT JSON ONLY (no markdown, no backticks):
+{
+  "questions": [
+    {
+      "question": "string",
+      "options": ["A", "B", "C", "D"],
+      "correctAnswer": "string",
+      "explanation": "string"
+    }
+  ]
+}
+`;
 
   try {
-    const result = await model.generateContent(prompt);
-    let text = result.response.text();
+    const response = await ai.models.generateContent({
+      model: "models/gemini-flash-latest",
+      contents: prompt,
+    });
 
-    // Remove accidental code fencing
-    text = text.replace(/```json|```/g, "").trim();
+    let text = response.text || "";
+    text = text.replace(/```(?:json)?/g, "").trim();
 
     const data = JSON.parse(text);
-
     return data.questions;
   } catch (error) {
     console.error("❌ Error generating quiz:", error);
@@ -71,7 +72,6 @@ export async function saveQuizResult(questions, answers, score) {
 
   if (!user) throw new Error("User not found");
 
-  // Prepare question result objects
   const questionResults = questions.map((q, index) => ({
     question: q.question,
     answer: q.correctAnswer,
@@ -93,24 +93,28 @@ export async function saveQuizResult(questions, answers, score) {
       .join("\n\n");
 
     const tipPrompt = `
-      The user got these ${user.industry} questions incorrect:
+The user answered some ${user.industry} questions incorrectly.
 
-      ${wrongText}
+${wrongText}
 
-      Give ONE SHORT improvement tip (max 2 sentences).
-      Do NOT mention mistakes directly.
-    `;
+Give ONE short improvement tip (max 2 sentences).
+Do NOT mention mistakes directly.
+`;
 
     try {
-      const tipResult = await model.generateContent(tipPrompt);
-      improvementTip = tipResult.response.text().trim();
+      const tipResponse = await ai.models.generateContent({
+        model: "models/gemini-flash-latest",
+        contents: tipPrompt,
+      });
+
+      improvementTip = tipResponse.text?.trim() || null;
     } catch (error) {
-      console.error("Error generating tip:", error);
+      console.error("Error generating improvement tip:", error);
     }
   }
 
   try {
-    const assessment = await db.assessment.create({
+    return await db.assessment.create({
       data: {
         userId: user.id,
         quizScore: score,
@@ -119,8 +123,6 @@ export async function saveQuizResult(questions, answers, score) {
         improvementTip,
       },
     });
-
-    return assessment;
   } catch (error) {
     console.error("❌ Error saving quiz result:", error);
     throw new Error("Failed to save quiz result");

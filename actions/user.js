@@ -16,44 +16,42 @@ export async function updateUser(data) {
   if (!user) throw new Error("User not found");
 
   try {
-    const result = await db.$transaction(async (tx) => {
-      // 1️⃣ Check if industry insight exists
-      let industryInsight = await tx.industryInsight.findUnique({
-        where: { industry: data.industry },
-      });
+    let industryInsight = await db.industryInsight.findUnique({
+      where: { industry: data.industry },
+    });
 
-      // 2️⃣ If not, generate AI insights & create it
-      if (!industryInsight) {
-        const insights = await generateAIInsights(data.industry);
+    if (!industryInsight) {
+      const insights = await generateAIInsights(data.industry);
 
-        industryInsight = await tx.industryInsight.create({
-          data: {
-            industry: data.industry,
-            ...insights,
-            nextUpdate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-          },
-        });
-      }
-
-      // 3️⃣ Update user data
-      const updatedUser = await tx.user.update({
-        where: { id: user.id },
+      industryInsight = await db.industryInsight.create({
         data: {
           industry: data.industry,
-          experience: data.experience,
-          bio: data.bio,
-          skills: data.skills,
+          ...insights,
+          nextUpdate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
         },
       });
+    }
 
-      return { updatedUser, industryInsight };
+    const updatedUser = await db.user.update({
+      where: { id: user.id },
+      data: {
+        industry: data.industry,
+        experience: data.experience,
+        bio: data.bio,
+        skills: data.skills,
+        industryInsightId: industryInsight.id,
+      },
     });
 
     revalidatePath("/");
+    revalidatePath("/dashboard");
+    revalidatePath("/onboarding");
 
-    // 🔥 Return correct object
-    return result.updatedUser;
-
+    return {
+      success: true,
+      user: updatedUser,
+      industryInsight,
+    };
   } catch (error) {
     console.error("Error updating user and industry:", error);
     throw new Error("Failed to update profile");

@@ -1,7 +1,8 @@
 {
-  "name": "ai-career-coach",
+  "name": "placenius",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
@@ -12,7 +13,7 @@
   "dependencies": {
     "@clerk/nextjs": "^6.35.5",
     "@clerk/themes": "^2.4.40",
-    "@google/generative-ai": "^0.21.0",
+    "@google/genai": "^1.33.0",
     "@hookform/resolvers": "^3.10.0",
     "@prisma/client": "^6.19.0",
     "@radix-ui/react-accordion": "^1.2.2",
