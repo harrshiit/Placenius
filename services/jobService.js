@@ -1,13 +1,9 @@
-import { promises as fs } from "fs";
-import path from "path";
 import mockJobs from "@/data/jobs/mock-jobs.json";
 import { readAdminJobs, toRecommendationJob } from "@/services/adminJobService";
 import { createJobAlerts } from "@/services/jobAlertService";
 import { fetchApiJobs } from "@/services/jobApiService";
 import { hasSafeApplyLink } from "@/lib/job-links";
 import { groupJobsByCategory, matchJobToSkills, sortJobsByMatch } from "@/services/matcher";
-
-const matchedJobsPath = path.join(process.cwd(), "data", "jobs", "matched-jobs.json");
 
 export async function fetchJobs({ query = "", category = "all" } = {}) {
   const adminJobs = await readAdminJobs();
@@ -49,10 +45,6 @@ export async function getRecommendedJobs(userSkills = [], options = {}) {
     apiJobs: safeApiJobs,
   });
 
-  saveMatchedJobs(matchedJobs).catch((error) => {
-    console.warn("Skipping matched jobs cache write:", error?.message || error);
-  });
-
   return {
     totalJobs: matchedJobs.length,
     categories: groupJobsByCategory(matchedJobs),
@@ -65,22 +57,4 @@ export async function getRecommendedJobs(userSkills = [], options = {}) {
     },
     apiStatus,
   };
-}
-
-export async function saveMatchedJobs(matchedJobs = []) {
-  await fs.mkdir(path.dirname(matchedJobsPath), { recursive: true });
-  await fs.writeFile(
-    matchedJobsPath,
-    JSON.stringify(matchedJobs, null, 2),
-    "utf-8"
-  );
-}
-
-export async function readSavedMatchedJobs() {
-  try {
-    const content = await fs.readFile(matchedJobsPath, "utf-8");
-    return JSON.parse(content);
-  } catch {
-    return [];
-  }
 }
