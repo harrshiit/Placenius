@@ -1,0 +1,86 @@
+[
+  {
+    "id": "job-frontend-1",
+    "title": "Frontend Developer Intern",
+    "company": "PixelCraft Labs",
+    "requiredSkills": ["HTML", "CSS", "JavaScript", "React", "Responsive Design"],
+    "applyLink": "https://example.com/jobs/frontend-developer-intern"
+  },
+  {
+    "id": "job-frontend-2",
+    "title": "Junior React Developer",
+    "company": "Nova UI Studio",
+    "requiredSkills": ["JavaScript", "React", "REST API Integration", "CSS", "Accessibility"],
+    "applyLink": "https://example.com/jobs/junior-react-developer"
+  },
+  {
+    "id": "job-fullstack-1",
+    "title": "Full Stack Developer Trainee",
+    "company": "LaunchBridge Tech",
+    "requiredSkills": ["HTML", "CSS", "JavaScript", "React", "Node.js", "Express.js", "REST APIs"],
+    "applyLink": "https://example.com/jobs/full-stack-developer-trainee"
+  },
+  {
+    "id": "job-backend-1",
+    "title": "Backend Developer Intern",
+    "company": "ServerNest",
+    "requiredSkills": ["JavaScript", "Node.js", "Express.js", "REST API Development", "CRUD Operations", "Database Basics"],
+    "applyLink": "https://example.com/jobs/backend-developer-intern"
+  },
+  {
+    "id": "job-software-1",
+    "title": "Software Engineer Intern",
+    "company": "CoreStack Systems",
+    "requiredSkills": ["Data Structures", "Algorithms", "Programming (Java/Python/C++)", "OOP", "Problem Solving", "Debugging"],
+    "applyLink": "https://example.com/jobs/software-engineer-intern"
+  },
+  {
+    "id": "job-data-1",
+    "title": "Data Analyst / Data Scientist Intern",
+    "company": "InsightForge",
+    "requiredSkills": ["Python", "Pandas", "NumPy", "Data Cleaning", "Statistics", "Visualization"],
+    "applyLink": "https://example.com/jobs/data-science-intern"
+  },
+  {
+    "id": "job-dataeng-1",
+    "title": "Data Engineer Intern",
+    "company": "PipeGrid Analytics",
+    "requiredSkills": ["Python", "SQL", "ETL Pipelines", "Data Warehousing", "Database Systems"],
+    "applyLink": "https://example.com/jobs/data-engineer-intern"
+  },
+  {
+    "id": "job-aiml-1",
+    "title": "AI/ML Engineer Intern",
+    "company": "ModelMint AI",
+    "requiredSkills": ["Python", "NumPy", "Pandas", "Scikit-learn", "Model Training", "Model Evaluation"],
+    "applyLink": "https://example.com/jobs/aiml-engineer-intern"
+  },
+  {
+    "id": "job-devops-1",
+    "title": "DevOps Engineer Intern",
+    "company": "DeployLoop",
+    "requiredSkills": ["Linux", "Git", "CI/CD", "Docker", "Scripting", "Monitoring Basics"],
+    "applyLink": "https://example.com/jobs/devops-engineer-intern"
+  },
+  {
+    "id": "job-cloud-1",
+    "title": "Cloud Support Engineer",
+    "company": "SkyOps Cloud",
+    "requiredSkills": ["Cloud Basics", "AWS", "Virtual Machines", "Storage Services", "Networking Basics"],
+    "applyLink": "https://example.com/jobs/cloud-support-engineer"
+  },
+  {
+    "id": "job-qa-1",
+    "title": "QA Test Engineer Trainee",
+    "company": "TestBeam Solutions",
+    "requiredSkills": ["Manual Testing", "Test Cases", "Bug Tracking", "Functional Testing", "Regression Testing"],
+    "applyLink": "https://example.com/jobs/qa-test-engineer-trainee"
+  },
+  {
+    "id": "job-security-1",
+    "title": "Cybersecurity Analyst Intern",
+    "company": "ShieldTrace",
+    "requiredSkills": ["Networking Basics", "Operating Systems", "Security Principles", "Vulnerability Assessment", "Firewalls"],
+    "applyLink": "https://example.com/jobs/cybersecurity-analyst-intern"
+  }
+]

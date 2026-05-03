@@ -12,7 +12,7 @@ const MODEL = "models/gemini-flash-latest";
 
 export async function generateAIInsights(industry) {
   const prompt = `
-Analyze the ${industry} industry and return ONLY valid JSON.
+Analyze the ${industry} industry for the Indian job market and return ONLY valid JSON.
 NO markdown, NO backticks, NO extra text.
 
 {
@@ -26,6 +26,11 @@ NO markdown, NO backticks, NO extra text.
   "keyTrends": ["trend1", "trend2"],
   "recommendedSkills": ["skill1", "skill2"]
 }
+
+Rules:
+- Salary values must be annual compensation in Indian rupees (INR), not USD.
+- Use full rupee numbers, for example 600000 for 6 LPA and 1800000 for 18 LPA.
+- Include Indian market context, Indian hiring demand, and India-relevant skills.
 `;
 
   const response = await ai.models.generateContent({
@@ -52,7 +57,7 @@ export async function getIndustryInsights() {
     throw new Error("User profile incomplete");
   }
 
-  if (user.industryInsight) {
+  if (user.industryInsight && new Date(user.industryInsight.nextUpdate) > new Date()) {
     return user.industryInsight;
   }
 
@@ -60,16 +65,28 @@ export async function getIndustryInsights() {
     where: { industry: user.industry },
   });
 
-  if (!industryInsight) {
+  if (!industryInsight || new Date(industryInsight.nextUpdate) <= new Date()) {
     const insights = await generateAIInsights(user.industry);
+    const updateWindow = {
+      lastUpdated: new Date(),
+      nextUpdate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    };
 
-    industryInsight = await db.industryInsight.create({
-      data: {
-        industry: user.industry,
-        ...insights,
-        nextUpdate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-      },
-    });
+    industryInsight = industryInsight
+      ? await db.industryInsight.update({
+          where: { id: industryInsight.id },
+          data: {
+            ...insights,
+            ...updateWindow,
+          },
+        })
+      : await db.industryInsight.create({
+          data: {
+            industry: user.industry,
+            ...insights,
+            ...updateWindow,
+          },
+        });
   }
 
   await db.user.update({

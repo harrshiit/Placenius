@@ -1,32 +1,37 @@
 export const faqs = [
   {
-    question: "What makes Sensai unique as a career development tool?",
+    question: "What is Placenius?",
     answer:
-      "Sensai combines AI-powered career tools with industry-specific insights to help you advance your career. Our platform offers three main features: an intelligent resume builder, a cover letter generator, and an adaptive interview preparation system. Each tool is tailored to your industry and skills, providing personalized guidance for your professional journey.",
+      "Placenius is an AI-powered placement preparation platform that helps students and early-career professionals plan their career path, improve resumes, prepare for interviews, discover suitable roles, and understand industry trends.",
   },
   {
-    question: "How does Sensai create tailored content?",
+    question: "How does Placenius personalize career guidance?",
     answer:
-      "Sensai learns about your industry, experience, and skills during onboarding. It then uses this information to generate customized resumes, cover letters, and interview questions. The content is specifically aligned with your professional background and industry standards, making it highly relevant and effective.",
+      "Placenius uses your onboarding profile, selected industry, saved skills, resume content, and practice history to generate more relevant recommendations, interview questions, resume suggestions, and career-fit insights.",
   },
   {
-    question: "How accurate and up-to-date are Sensai's industry insights?",
+    question: "What does the Career Fit Analyzer do?",
     answer:
-      "We update our industry insights weekly using advanced AI analysis of current market trends. This includes salary data, in-demand skills, and industry growth patterns. Our system constantly evolves to ensure you have the most relevant information for your career decisions.",
+      "The Career Fit Analyzer compares your current skills with common requirements for roles like Frontend, Backend, Full Stack, AI/ML, Data Science, and DevOps. It shows readiness scores, strengths, missing skills, and suggested next steps.",
   },
   {
-    question: "Is my data secure with Sensai?",
+    question: "How does Placenius find job recommendations?",
     answer:
-      "Absolutely. We prioritize the security of your professional information. All data is encrypted and securely stored using industry-standard practices. We use Clerk for authentication and never share your personal information with third parties.",
+      "Placenius keeps curated admin-added jobs as the primary source, then adds live API jobs as a secondary source when available. Jobs are matched against your skills so you can focus on opportunities that fit your profile.",
   },
   {
-    question: "How can I track my interview preparation progress?",
+    question: "Are Industry Insights updated automatically?",
     answer:
-      "Sensai tracks your performance across multiple practice interviews, providing detailed analytics and improvement suggestions. You can view your progress over time, identify areas for improvement, and receive AI-generated tips to enhance your interview skills based on your responses.",
+      "Yes. Industry Insights refresh using Gemini when the saved insight expires, and the scheduled update flow can refresh records weekly. Salary insights are shown for the Indian market in INR/LPA.",
   },
   {
-    question: "Can I edit the AI-generated content?",
+    question: "Can I edit AI-generated resumes and cover letters?",
     answer:
-      "Yes! While Sensai generates high-quality initial content, you have full control to edit and customize all generated resumes, cover letters, and other content. Our markdown editor makes it easy to refine the content to perfectly match your needs.",
+      "Yes. AI-generated content is only a starting point. You can edit, refine, and customize resumes and cover letters before using them for real applications.",
+  },
+  {
+    question: "Is Placenius only for Indian students?",
+    answer:
+      "Placenius is designed with placement-focused workflows that are useful for students and job seekers broadly, but the current live job search and salary insights are configured for the Indian market.",
   },
 ];

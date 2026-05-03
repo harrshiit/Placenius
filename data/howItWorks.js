@@ -1,4 +1,4 @@
-import { UserPlus, FileEdit, Users, LineChart } from "lucide-react";
+import { UserPlus, FileEdit, Users, Radar } from "lucide-react";
 
 export const howItWorks = [
   {
@@ -7,19 +7,21 @@ export const howItWorks = [
     icon: <UserPlus className="w-8 h-8 text-primary" />,
   },
   {
-    title: "Craft Your Documents",
-    description: "Create ATS-optimized resumes and compelling cover letters",
+    title: "Build or Upload Skills",
+    description:
+      "Create your resume and profile so Placenius can understand your current stack",
     icon: <FileEdit className="w-8 h-8 text-primary" />,
+  },
+  {
+    title: "Analyze Career Fit",
+    description:
+      "See how strongly your skills match Frontend, Backend, Full Stack, AI, and Data roles",
+    icon: <Radar className="w-8 h-8 text-primary" />,
   },
   {
     title: "Prepare for Interviews",
     description:
       "Practice with AI-powered mock interviews tailored to your role",
     icon: <Users className="w-8 h-8 text-primary" />,
-  },
-  {
-    title: "Track Your Progress",
-    description: "Monitor improvements with detailed performance analytics",
-    icon: <LineChart className="w-8 h-8 text-primary" />,
   },
 ];

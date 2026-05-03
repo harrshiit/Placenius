@@ -4,10 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   ArrowRight,
-  Trophy,
-  Target,
+  Radar,
   Sparkles,
-  CheckCircle2,
+  BrainCircuit,
+  TrendingUp,
 } from "lucide-react";
 import HeroSection from "@/components/hero";
 import {
@@ -21,6 +21,7 @@ import { features } from "@/data/features";
 import { testimonial } from "@/data/testimonial";
 import { faqs } from "@/data/faqs";
 import { howItWorks } from "@/data/howItWorks";
+import CareerReadinessWidget from "@/components/career-readiness-widget";
 
 export default function LandingPage() {
   return (
@@ -30,11 +31,108 @@ export default function LandingPage() {
       {/* Hero Section */}
       <HeroSection />
 
+      <section className="w-full pb-12 md:pb-16">
+        <div className="container mx-auto px-4 md:px-6">
+          <Card className="max-w-6xl mx-auto border-white/10 bg-white/5 backdrop-blur-xl">
+            <CardContent className="p-6 md:p-8">
+              <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr] items-center">
+                <div className="space-y-4">
+                  <div className="inline-flex rounded-full border border-cyan-400/20 bg-cyan-400/10 px-4 py-1.5 text-sm text-cyan-200">
+                    New flagship feature
+                  </div>
+                  <h2 className="text-3xl md:text-4xl font-bold">
+                    Career Fit Analyzer
+                  </h2>
+                  <p className="text-muted-foreground leading-7">
+                    Placenius now studies your onboarding profile and resume
+                    content to estimate how ready you are for Frontend,
+                    Full Stack, Backend, Database, AI/ML, and Data Science
+                    roles.
+                  </p>
+                  <div className="space-y-3">
+                    {[
+                      "Role-wise readiness percentages with visual charts",
+                      "Detected strengths from your current skills and resume",
+                      "Missing skills and next learning priorities for each domain",
+                    ].map((line) => (
+                      <div key={line} className="flex items-start gap-3">
+                        <Sparkles className="h-4 w-4 mt-1 text-cyan-300" />
+                        <span className="text-sm md:text-base">{line}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <Link href="/career-fit">
+                    <Button size="lg" className="mt-3 rounded-full px-7">
+                      Open Career Fit Analyzer <ArrowRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  </Link>
+                </div>
+
+                <div className="grid gap-4 sm:grid-cols-3">
+                  <Card className="border-white/10 bg-background/80">
+                    <CardContent className="pt-6">
+                      <Radar className="h-8 w-8 text-cyan-300 mb-4" />
+                      <h3 className="font-semibold">Role Matching</h3>
+                      <p className="text-sm text-muted-foreground mt-2">
+                        Compare your current skill set against multiple developer tracks.
+                      </p>
+                    </CardContent>
+                  </Card>
+                  <Card className="border-white/10 bg-background/80">
+                    <CardContent className="pt-6">
+                      <BrainCircuit className="h-8 w-8 text-fuchsia-300 mb-4" />
+                      <h3 className="font-semibold">Smart Detection</h3>
+                      <p className="text-sm text-muted-foreground mt-2">
+                        Extract skills from resume content and onboarding inputs.
+                      </p>
+                    </CardContent>
+                  </Card>
+                  <Card className="border-white/10 bg-background/80">
+                    <CardContent className="pt-6">
+                      <TrendingUp className="h-8 w-8 text-emerald-300 mb-4" />
+                      <h3 className="font-semibold">Learning Path</h3>
+                      <p className="text-sm text-muted-foreground mt-2">
+                        See the exact next skills needed to become placement-ready.
+                      </p>
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
+      <CareerReadinessWidget />
+
       {/* Features Section */}
       <section className="w-full py-12 md:py-24 lg:py-32 bg-background">
         <div className="container mx-auto px-4 md:px-6">
+          <div className="mx-auto mb-12 max-w-6xl overflow-hidden rounded-lg border border-cyan-400/20 bg-gradient-to-r from-cyan-500/10 via-purple-500/10 to-indigo-500/10 p-6 md:p-8">
+            <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
+              <div className="max-w-2xl">
+                <div className="inline-flex items-center rounded-full border border-cyan-400/20 bg-cyan-400/10 px-3 py-1 text-xs font-medium text-cyan-200">
+                  Feature introduction
+                </div>
+                <h2 className="mt-4 text-2xl font-bold tracking-tight md:text-3xl">
+                  One placement suite for every step of your career prep
+                </h2>
+                <p className="mt-3 text-sm leading-6 text-muted-foreground md:text-base">
+                  Placenius brings career guidance, fit analysis, interview
+                  practice, job matching, and Indian market insights into one
+                  focused student workflow.
+                </p>
+              </div>
+              <Link href="/job-recommendations">
+                <Button className="w-full rounded-full md:w-auto">
+                  Explore Job Matches <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
+            </div>
+          </div>
+
           <h2 className="text-3xl font-bold tracking-tighter text-center mb-12">
-            Why choose placenius ?
+            Why choose Placenius?
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 max-w-6xl mx-auto">
             {features.map((feature, index) => (
