@@ -6,17 +6,18 @@ const alertsPath = path.join(process.cwd(), "data", "jobs", "job-alerts.json");
 const MATCH_THRESHOLD = 70;
 
 async function ensureStorage() {
-  await fs.mkdir(path.dirname(alertsPath), { recursive: true });
-
   try {
     await fs.access(alertsPath);
   } catch {
-    await fs.writeFile(alertsPath, "[]", "utf-8");
+    return false;
   }
+
+  return true;
 }
 
 async function readAlerts() {
-  await ensureStorage();
+  const storageExists = await ensureStorage();
+  if (!storageExists) return [];
 
   try {
     const content = await fs.readFile(alertsPath, "utf-8");
@@ -28,8 +29,11 @@ async function readAlerts() {
 }
 
 async function writeAlerts(alerts) {
-  await ensureStorage();
-  await fs.writeFile(alertsPath, JSON.stringify(alerts, null, 2), "utf-8");
+  try {
+    await fs.writeFile(alertsPath, JSON.stringify(alerts, null, 2), "utf-8");
+  } catch (error) {
+    console.warn("Skipping job alert cache write:", error?.message || error);
+  }
 }
 
 export async function createJobAlerts({

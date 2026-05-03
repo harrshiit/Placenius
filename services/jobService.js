@@ -49,7 +49,9 @@ export async function getRecommendedJobs(userSkills = [], options = {}) {
     apiJobs: safeApiJobs,
   });
 
-  await saveMatchedJobs(matchedJobs);
+  saveMatchedJobs(matchedJobs).catch((error) => {
+    console.warn("Skipping matched jobs cache write:", error?.message || error);
+  });
 
   return {
     totalJobs: matchedJobs.length,
