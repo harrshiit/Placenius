@@ -2,19 +2,16 @@
 
 import { db } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
-import { GoogleGenAI } from "@google/genai";
+import { getGeminiClient } from "@/lib/gemini";
 
 // ✅ Correct Gemini initialization
-const ai = new GoogleGenAI({
-  apiKey: process.env.GEMINI_API_KEY,
-});
-
 // -------------------------------------------------
 // GENERATE QUIZ
 // -------------------------------------------------
 export async function generateQuiz() {
   const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");
+  const ai = getGeminiClient();
 
   const user = await db.user.findUnique({
     where: { clerkUserId: userId },
@@ -65,6 +62,7 @@ RETURN STRICT JSON ONLY (no markdown, no backticks):
 export async function saveQuizResult(questions, answers, score) {
   const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");
+  const ai = getGeminiClient();
 
   const user = await db.user.findUnique({
     where: { clerkUserId: userId },
