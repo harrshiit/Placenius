@@ -2,16 +2,12 @@
 
 import { db } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
-import { GoogleGenAI } from "@google/genai";
-
-// Initialize Gemini AI (CORRECT SDK)
-const ai = new GoogleGenAI({
-  apiKey: process.env.GEMINI_API_KEY,
-});
+import { getGeminiClient } from "@/lib/gemini";
 
 export async function generateCoverLetter(data) {
   const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");
+  const ai = getGeminiClient();
 
   const user = await db.user.findUnique({
     where: { clerkUserId: userId },

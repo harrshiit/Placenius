@@ -2,14 +2,10 @@
 
 import { db } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
-import { GoogleGenAI } from "@google/genai";
+import { getGeminiClient } from "@/lib/gemini";
 import { revalidatePath } from "next/cache";
 
 // ✅ Correct Gemini initialization
-const ai = new GoogleGenAI({
-  apiKey: process.env.GEMINI_API_KEY,
-});
-
 // -------------------------------------------------
 // SAVE RESUME
 // -------------------------------------------------
@@ -62,6 +58,7 @@ export async function getResume() {
 export async function improveWithAI({ current, type }) {
   const { userId } = await auth();
   if (!userId) throw new Error("Unauthorized");
+  const ai = getGeminiClient();
 
   const user = await db.user.findUnique({
     where: { clerkUserId: userId },

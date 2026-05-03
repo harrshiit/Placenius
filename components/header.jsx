@@ -12,7 +12,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import Link from "next/link";
-import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/nextjs";
+import { SignInButton, UserButton } from "@clerk/nextjs";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,6 +24,7 @@ import { isAdminEmail } from "@/lib/admin";
 
 export default async function Header() {
   const currentUser = await checkUser();
+  const isSignedIn = Boolean(currentUser);
   const isAdmin = isAdminEmail(currentUser?.email);
 
   return (
@@ -46,7 +47,8 @@ export default async function Header() {
 
         {/* Action Buttons */}
         <div className="flex items-center space-x-2 md:space-x-4">
-          <SignedIn>
+          {isSignedIn ? (
+            <>
             {isAdmin ? (
               <Link href="/admin/jobs">
                 <Button
@@ -123,15 +125,7 @@ export default async function Header() {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-          </SignedIn>
 
-          <SignedOut>
-            <SignInButton>
-              <Button variant="outline">Sign In</Button>
-            </SignInButton>
-          </SignedOut>
-
-          <SignedIn>
             <UserButton
               appearance={{
                 elements: {
@@ -142,7 +136,12 @@ export default async function Header() {
               }}
               afterSignOutUrl="/"
             />
-          </SignedIn>
+            </>
+          ) : (
+            <SignInButton>
+              <Button variant="outline">Sign In</Button>
+            </SignInButton>
+          )}
         </div>
       </nav>
     </header>

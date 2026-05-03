@@ -2,15 +2,12 @@
 
 import { db } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
-import { GoogleGenAI } from "@google/genai";
-
-const ai = new GoogleGenAI({
-  apiKey: process.env.GEMINI_API_KEY,
-});
+import { getGeminiClient } from "@/lib/gemini";
 
 const MODEL = "models/gemini-flash-latest";
 
 export async function generateAIInsights(industry) {
+  const ai = getGeminiClient();
   const prompt = `
 Analyze the ${industry} industry for the Indian job market and return ONLY valid JSON.
 NO markdown, NO backticks, NO extra text.
